@@ -1,21 +1,16 @@
 require('dotenv').config({ path: './.env' });
-
 const Sequelize = require('sequelize');
 
 const sequelize = new Sequelize(
-  process.env.DB_NAME, 
-  process.env.DB_USER, 
-  process.env.DB_PASSWORD, 
+  process.env.DB_NAME,  // 'ecommerce_db'
+  process.env.DB_USER,  // 'postgres'
+  process.env.DB_PASSWORD,  // 'postgres'
   {
-    host: process.env.DB_HOST || '127.0.0.1',
+    host: process.env.DB_HOST,  // 'localhost'
     dialect: 'postgres',
-    logging: false // you can turn logging on for debugging
+    port: process.env.DB_PORT,  // 5432
+    logging: false
   }
 );
-console.log('DB_NAME:', process.env.DB_NAME);
-console.log('DB_USER:', process.env.DB_USER);
-console.log('DB_PASSWORD:', process.env.DB_PASSWORD);
-console.log('DB_HOST:', process.env.DB_HOST);
-console.log('DB_PORT:', process.env.DB_PORT);
 
 module.exports = sequelize;
