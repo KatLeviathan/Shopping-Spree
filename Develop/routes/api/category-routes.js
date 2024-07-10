@@ -1,10 +1,12 @@
 const router = require('express').Router();
-const { Category } = require('../../models/Category'); // Ensure the import is correctly capitalized
+const { Category, Product } = require('../../models'); // Ensure the import is correctly capitalized
 
 // GET all categories
-router.get('/categories', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const categories = await Category.findAll();
+    const categories = await Category.findAll({
+      include: [{ model: Product }],
+    });
     res.json(categories);
   } catch (err) {
     console.error(err);
@@ -13,7 +15,7 @@ router.get('/categories', async (req, res) => {
 });
 
 // GET category by ID
-router.get('/categories/:id', async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const category = await Category.findByPk(req.params.id);
     if (!category) {
@@ -28,7 +30,7 @@ router.get('/categories/:id', async (req, res) => {
 });
 
 // POST create a new category
-router.post('/categories', async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const newCategory = await Category.create(req.body);
     res.status(201).json(newCategory);
@@ -40,7 +42,7 @@ router.post('/categories', async (req, res) => {
 
 
 // PUT update category by ID
-router.put('/categories/:id', async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
     const updatedCategory = await Category.update(req.body, {
       where: { id: req.params.id }
@@ -53,7 +55,7 @@ router.put('/categories/:id', async (req, res) => {
 });
 
 // DELETE category by ID
-router.delete('/categories/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const deletedCategory = await Category.destroy({
       where: { id: req.params.id }

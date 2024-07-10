@@ -17,8 +17,9 @@ Category.init({
 }, {
   sequelize,
   modelName: 'category',
-  freezeTableName: true,
-  underscored: true
+  timestamps: false,
+    freezeTableName: true,
+    underscored: true,
 });
 
 module.exports = Category;

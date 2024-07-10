@@ -1,119 +1,35 @@
-const { Sequelize, DataTypes } = require('sequelize');
-console.log(process.env.DB_PASSWORD);  // Check if the password is logged correctly
-const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  process.env.DB_PASSWORD,
-  {
-    host: '127.0.0.1',
-    dialect: 'postgres'
-  }
-);
-
-// Import model files
 const Category = require('./Category');
-const Product = require('./product');
-const Tag = require('./tag');
+const Product = require('./Product');
 const ProductTag = require('./ProductTag');
+const Tag = require('./Tag');
 
-// Initialize models
-Category.init({
-  id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    primaryKey: true,
-    autoIncrement: true
-  },
-  category_name: {
-    type: DataTypes.STRING,
-    allowNull: false
-  }
-}, {
-  sequelize,
-  timestamps: false,
-  freezeTableName: true,
-  underscored: true,
-  modelName: 'category'
+Category.hasMany(Product, {
+  foreignKey: 'category_id',
+  onDelete: 'CASCADE',
 });
 
-Product.init({
-  id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    primaryKey: true,
-    autoIncrement: true
-  },
-  product_name: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  price: {
-    type: DataTypes.DECIMAL(10, 2),
-    allowNull: false,
-    validate: { isDecimal: true }
-  },
-  stock: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: 10,
-    validate: { isNumeric: true }
-  },
-  category_id: {
-    type: DataTypes.INTEGER,
-    references: { model: 'category', key: 'id' }
-  }
-}, {
-  sequelize,
-  modelName: 'product',
-  freezeTableName: true,
-  underscored: true
+Product.belongsTo(Category, {
+  foreignKey: 'category_id',
 });
 
-Tag.init({
-  id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    primaryKey: true,
-    autoIncrement: true
+Product.belongsToMany(Tag, {
+  // Define the third table needed to store the foreign keys
+  through: {
+    model: ProductTag,
+    unique: false
   },
-  tag_name: {
-    type: DataTypes.STRING,
-    allowNull: false
-  }
-}, {
-  sequelize,
-  modelName: 'tag',
-  freezeTableName: true,
-  underscored: true
+  // Define an alias for when data is retrieved
+  as: 'product_tags'
 });
 
-ProductTag.init({
-  product_id: {
-    type: DataTypes.INTEGER,
-    references: { model: 'product', key: 'id' }
+Tag.belongsToMany(Product, {
+  // Define the third table needed to store the foreign keys
+  through: {
+    model: ProductTag,
+    unique: false
   },
-  tag_id: {
-    type: DataTypes.INTEGER,
-    references: { model: 'tag', key: 'id' }
-  }
-}, {
-  sequelize,
-  modelName: 'productTag',
-  freezeTableName: true,
-  underscored: true
+  // Define an alias for when data is retrieved
+  as: 'tag_products'
 });
 
-// Define associations
-Product.belongsTo(Category, { foreignKey: 'category_id' });
-Category.hasMany(Product, { foreignKey: 'category_id' });
-Product.belongsToMany(Tag, { through: ProductTag, foreignKey: 'product_id' });
-Tag.belongsToMany(Product, { through: ProductTag, foreignKey: 'tag_id' });
-
-// Export all models and Sequelize instance
-module.exports = {
-  sequelize,
-  Category,
-  Product,
-  Tag,
-  ProductTag
-};
+module.exports = { Category, Product, ProductTag, Tag };

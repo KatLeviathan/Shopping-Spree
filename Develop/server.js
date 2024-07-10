@@ -1,3 +1,4 @@
+require('dotenv').config({ path: '.env' });
 const express = require('express');
 const sequelize = require('./config/connection');
 const routes = require('./routes'); // Import the routes from routes/index.js

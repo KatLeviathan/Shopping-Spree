@@ -1,9 +1,9 @@
 const router = require('express').Router();
-const { Product } = require('../../models/product');
+const { Product } = require('../../models');
 
 
 // GET all products
-router.get('/products', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const products = await Product.findAll();
     res.json(products);
@@ -14,7 +14,7 @@ router.get('/products', async (req, res) => {
 });
 
 // GET product by ID
-router.get('/products/:id', async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const product = await Product.findByPk(req.params.id);
     if (!product) {
@@ -29,7 +29,7 @@ router.get('/products/:id', async (req, res) => {
 });
 
 // POST create a new product
-router.post('/products', async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const newProduct = await Product.create(req.body);
     res.status(201).json(newProduct);
@@ -39,7 +39,7 @@ router.post('/products', async (req, res) => {
   }
 });
 
-router.put('/products/:id', async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
     const [updated] = await Product.update(req.body, {
       where: { id: req.params.id }
@@ -59,15 +59,18 @@ router.put('/products/:id', async (req, res) => {
 
 
 // DELETE product by ID
-router.delete('/products/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
-    const deletedProduct = await Product.destroy({
+    const tripData = await Product.destroy({
       where: { id: req.params.id }
     });
-    res.json(deletedProduct);
+    if (!productData) {
+      res.status(404).json({ message: 'No product with this id!' });
+      return;
+    }
+    res.status(200).json(productData);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Failed to delete product' });
+    res.status(500).json(err);
   }
 });
 

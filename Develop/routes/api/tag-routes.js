@@ -1,8 +1,8 @@
 const router = require('express').Router();
-const { Tag } = require('../../models/tag');
+const { Tag } = require('../../models');
 
 // GET all tags
-router.get('/tags', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const tags = await Tag.findAll();
     res.json(tags);
@@ -13,7 +13,7 @@ router.get('/tags', async (req, res) => {
 });
 
 // GET tag by ID
-router.get('/tags/:id', async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const tag = await Tag.findByPk(req.params.id);
     if (!tag) {
@@ -28,7 +28,7 @@ router.get('/tags/:id', async (req, res) => {
 });
 
 // POST create a new tag
-router.post('/tags', async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const newTag = await Tag.create(req.body);
     res.status(201).json(newTag);
@@ -39,7 +39,7 @@ router.post('/tags', async (req, res) => {
 });
 
 // PUT update tag by ID
-router.put('/tags/:id', async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
     const updatedTag = await Tag.update(req.body, {
       where: { id: req.params.id }
@@ -52,7 +52,7 @@ router.put('/tags/:id', async (req, res) => {
 });
 
 // DELETE tag by ID
-router.delete('/tags/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const deletedTag = await Tag.destroy({
       where: { id: req.params.id }
